@@ -3,7 +3,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.api.db import engine
+from src.api.db import get_engine
 from src.api.journal_router import router as journal_router
 from src.api.models import Base
 
@@ -44,6 +44,7 @@ app.add_middleware(
 @app.on_event("startup")
 async def on_startup() -> None:
     """Create database tables on startup (simple migration-less setup for MVP)."""
+    engine = get_engine()
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
